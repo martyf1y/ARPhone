@@ -5,30 +5,8 @@
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <!-- we import arjs version without NFT but with marker + location based support -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-
-    <script>
-        AFRAME.registerComponent('vidhandler', {
-            // ...
-            init: function () {
-                // Set up initial state and variables.
-                this.toggle = false;
-                this.vid = document.querySelector("#vid")
-                this.vid.pause();
-            },
-            tick: function () {
-
-                if (this.el.object3D.visible == true) {
-                    if (!this.toggle) {
-                        this.toggle = true;
-                        this.vid.play();
-                    }
-                } else {
-                    this.toggle = false;
-                    this.vid.pause();
-                }
-            }
-        });
-    </script>
+    <script src="gesture-detector.js"></script>
+    <script src="gesture-handler.js"></script>
 </head>
 
 <body style="margin : 0px; overflow: hidden;">
@@ -39,18 +17,14 @@
         <a-assets>
             <a-asset-item id="Moto" src="MotoG_5G.glb">
             </a-asset-item>
-            <video id="vid" autoplay loop="true" src="stock.mp4"></video>
         </a-assets>
 
-        <!--gesture-handler embedded artoolkit='sourceType: webcam;' renderer='logarithmicDepthBuffer: true;' -->
+        <!-- embedded artoolkit='sourceType: webcam;' renderer='logarithmicDepthBuffer: true;' -->
         <a-marker type="pattern" url="pattern-GoMarker.patt" raycaster="objects: .clickable" emitevents="true"
             cursor="fuse: false; rayOrigin: mouse;" id="markerA">
-
             <a-entity id="Moto-model" gltf-model="#Moto" position="0 0 0" scale="0.01 0.01 0.01" rotation="270 0 0"
-                class="clickable">
-
+                class="clickable" gesture-handler>
             </a-entity>
-            <a-video vidhandler src="#vid" scale="1.52,  0.70" rotation="90 0 90" position="0.002 0.06 -0.01"></a-video>
         </a-marker>
 
         <a-entity camera camera="far:1000; near:0.01"></a-entity>
