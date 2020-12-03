@@ -1,23 +1,34 @@
-<!DOCTYPE html>
 <html>
 
 <head>
-    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-    <!-- we import arjs version without NFT but with marker + location based support -->
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="gesture-detector.js"></script>
+    <script src="gesture-handler.js"></script>
     <script>
         AFRAME.registerComponent('vidhandler', {
-            // ...
             init: function () {
-                // Set up initial state and variables.
                 this.toggle = false;
+                this.hidden = true;
                 this.vid = document.querySelector("#vid")
                 this.vid.pause();
+                this.el.setAttribute('visible', false);
+                this.vid.addEventListener("ended", (e) => {
+                this.vid.currentTime = 0;
+                this.vid.play();
+
+                })
             },
+
+
+   
+
+
             tick: function () {
 
-                if (this.el.object3D.visible == true) {
+                if (this.el.object3D.visible == true && !this.hidden) {
                     if (!this.toggle) {
                         this.toggle = true;
                         this.vid.play();
@@ -25,36 +36,96 @@
                 } else {
                     this.toggle = false;
                     this.vid.pause();
+                    this.vid.currentTime = 0;
                 }
+            },
+            hide: function (){
+               console.log("Hiding");
+               this.el.setAttribute('visible', this.hidden);
+               this.hidden = !this.hidden;
             }
         });
     </script>
 </head>
 
-<body style="margin : 0px; overflow: hidden;">
-    <a-scene arjs="sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280;
-        displayHeight: 960;" embedded renderer="logarithmicDepthBuffer:true; antialias: false;"
-        vr-mode-ui="enabled: false" gesture-detector id="scene">
+<body style='margin : 0px; overflow: hidden;'>
+
+    <a-scene arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" 
+    embedded
+    renderer="logarithmicDepthBuffer:true; antialias: false;"
+    vr-mode-ui="enabled: false"
+    gesture-detector
+    id="scene"
+    device-orientation-permission-ui="enabled: false" >
 
         <a-assets>
-            <a-asset-item id="Moto" src="MotoG_5G.glb">
-            </a-asset-item>
-            <video id="vid" autoplay loop="true" src="stock.mp4"></video>
+            <video id="vid" src="Moto1080x2520NoAudio.mp4"></video>
+            <a-asset-item id="Moto" src="MotoG_5G.glb"></a-asset-item>
         </a-assets>
 
-        <!--gesture-handler embedded artoolkit='sourceType: webcam;' renderer='logarithmicDepthBuffer: true;' -->
-        <a-marker type="pattern" url="pattern-GoMarker.patt" raycaster="objects: .clickable" emitevents="true"
-            cursor="fuse: false; rayOrigin: mouse;" id="markerA">
 
-            <a-entity id="Moto-model" gltf-model="#Moto" position="0 0 0" scale="0.01 0.01 0.01" rotation="270 0 0"
-                class="clickable">
 
-            </a-entity>
-            <a-video vidhandler src="#vid" scale="1.52,  0.70" rotation="90 0 90" position="0.002 0.06 -0.01"></a-video>
+        <a-marker 
+        type="pattern" 
+        url="Moto_Marker.patt"
+        raycaster="objects: .clickable" 
+        emitevents="true"
+        cursor="fuse: false; rayOrigin: mouse;" >
+
+            <a-entity 
+            id = "motoModel"
+            gltf-model="#Moto" 
+            position="0 0 0"
+            scale="0.015 0.015 0.015"
+            rotation="270 0 0"
+            gesturehandler="minScale: 1; maxScale: 10"
+            class="clickable"></a-entity>
+
+                <!--position="0.002 0.06 -0.01"  scale="1.52, 0.70" pos = x, z, y -->
+            <a-video 
+            id = "vidPlane"
+            src="#vid"
+            position="0.002 0.08 -0.005"
+            scale="1.06, 2.27"
+            rotation="270 0 0"
+            vidhandler 
+            class="clickable"></a-video>
         </a-marker>
 
-        <a-entity camera camera="far:1000; near:0.01"></a-entity>
+        <a-entity camera>
+        </a-entity>
+         
     </a-scene>
+    
+   
+   <div style='position: fixed;
+  width: 100%;
+  max-width: 400px;
+  display: block;
+  top: 0px;
+  '>
+    
+<button id="myBtn" type="button" style="width: 100px; height: 50px; position: absolute;
+left: 70%;
+top: 50px;
+">Find out
+    more!</button>
+   </div>
+
+   <script>
+       document.getElementById("myBtn").addEventListener("click", function () {
+           let tModel = document.querySelector('#motoModel');
+           tModel.components.rotation="270 0 0";
+           tModel.components.gesturehandler.lockToggle();
+           console.log("Clicked");
+           let tVid = document.querySelector('#vidPlane');
+           tVid.components.vidhandler.hide();
+
+          
+       });
+
+      
+   </script>
 </body>
 
 </html>
