@@ -2,7 +2,6 @@
 
 <head>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <script src="gesture-detector.js"></script>
@@ -16,15 +15,10 @@
                 this.vid.pause();
                 this.el.setAttribute('visible', false);
                 this.vid.addEventListener("ended", (e) => {
-                this.vid.currentTime = 0;
-                this.vid.play();
-
+                    this.vid.currentTime = 0;
+                    this.vid.play();
                 })
             },
-
-
-   
-
 
             tick: function () {
 
@@ -39,93 +33,80 @@
                     this.vid.currentTime = 0;
                 }
             },
-            hide: function (){
-               console.log("Hiding");
-               this.el.setAttribute('visible', this.hidden);
-               this.hidden = !this.hidden;
+            hide: function () {
+                console.log("Hiding");
+                this.el.setAttribute('visible', this.hidden);
+                this.hidden = !this.hidden;
             }
         });
     </script>
+    <style>
+        .button {
+            position: fixed;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
 </head>
 
 <body style='margin : 0px; overflow: hidden;'>
 
-    <a-scene arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" 
-    embedded
-    renderer="logarithmicDepthBuffer:true; antialias: false;"
-    vr-mode-ui="enabled: false"
-    gesture-detector
-    id="scene"
-    device-orientation-permission-ui="enabled: false" >
+    <a-scene arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" embedded
+        renderer="logarithmicDepthBuffer:true; antialias: false;" vr-mode-ui="enabled: false" gesture-detector
+        id="scene" device-orientation-permission-ui="enabled: false">
 
         <a-assets>
-            <video id="vid" src="Moto1080x2520NoAudio.mp4"></video>
+            <video id="vid" src="Moto1080x2520NoAudio.mp4" preload="auto" response-type="arraybuffer" loop crossorigin
+                webkit-playsinline playsinline></video>
             <a-asset-item id="Moto" src="MotoG_5G.glb"></a-asset-item>
         </a-assets>
 
 
 
-        <a-marker 
-        type="pattern" 
-        url="Moto_Marker.patt"
-        raycaster="objects: .clickable" 
-        emitevents="true"
-        cursor="fuse: false; rayOrigin: mouse;" >
+        <a-marker type="pattern" url="Moto_Marker.patt" raycaster="objects: .clickable" emitevents="true"
+            cursor="fuse: false; rayOrigin: mouse;">
 
-            <a-entity 
-            id = "motoModel"
-            gltf-model="#Moto" 
-            position="0 0 0"
-            scale="0.015 0.015 0.015"
-            rotation="270 0 0"
-            gesturehandler="minScale: 1; maxScale: 10"
-            class="clickable"></a-entity>
+            <a-entity id="motoModel" gltf-model="#Moto" position="0 0 0" scale="0.015 0.015 0.015" rotation="270 0 0"
+                gesturehandler="minScale: 1; maxScale: 10" class="clickable"></a-entity>
 
-                <!--position="0.002 0.06 -0.01"  scale="1.52, 0.70" pos = x, z, y -->
-            <a-video 
-            id = "vidPlane"
-            src="#vid"
-            position="0.002 0.08 -0.005"
-            scale="1.06, 2.27"
-            rotation="270 0 0"
-            vidhandler 
-            class="clickable"></a-video>
+            <!--position="0.002 0.06 -0.01"  scale="1.52, 0.70" pos = x, z, y -->
+            <a-video id="vidPlane" src="#vid" position="0.002 0.08 -0.005" scale="1.06, 2.27" rotation="270 0 0"
+                vidhandler class="clickable"></a-video>
         </a-marker>
 
-        <a-entity camera>
-        </a-entity>
-         
+        <a-entity camera></a-entity>
     </a-scene>
-    
-   
-   <div style='position: fixed;
-  width: 100%;
+
+    <div style='position: fixed;
   max-width: 400px;
   display: block;
-  top: 0px;
+  top: 10px;
+  left: 10px;
   '>
-    
-<button id="myBtn" type="button" style="width: 100px; height: 50px; position: absolute;
-left: 70%;
-top: 50px;
-">Find out
-    more!</button>
-   </div>
+        <button id="myBtn" type="button" class="button">
+            <div>Find out
+                more!</div>
+        </button>
+    </div>
+    <script>
+        document.getElementById("myBtn").addEventListener("click", function () {
+            let tModel = document.querySelector('#motoModel');
+            tModel.components.rotation = "270 0 0";
+            tModel.components.gesturehandler.lockToggle();
+            let tVid = document.querySelector('#vidPlane');
+            tVid.components.vidhandler.hide();
+            let x = document.getElementById("myBtn");
+            if (x.innerHTML === "Find out more!") {
+                x.innerHTML = "Inspect phone";
+            } else {
+                x.innerHTML = "Find out more!";
+            }
 
-   <script>
-       document.getElementById("myBtn").addEventListener("click", function () {
-           let tModel = document.querySelector('#motoModel');
-           tModel.components.rotation="270 0 0";
-           tModel.components.gesturehandler.lockToggle();
-           console.log("Clicked");
-           let tVid = document.querySelector('#vidPlane');
-           tVid.components.vidhandler.hide();
-
-          
-       });
-
-      
-   </script>
+        });
+    </script>
 </body>
 
 </html>
