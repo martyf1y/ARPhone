@@ -21,7 +21,6 @@
             },
 
             tick: function () {
-
                 if (this.el.object3D.visible == true && !this.hidden) {
                     if (!this.toggle) {
                         this.toggle = true;
@@ -37,6 +36,12 @@
                 console.log("Hiding");
                 this.el.setAttribute('visible', this.hidden);
                 this.hidden = !this.hidden;
+                let x = document.getElementById("myBtn");
+                if (!this.hidden) {
+                    x.innerHTML = "Inspect phone";
+                } else {
+                    x.innerHTML = "Find out more!";
+                }
             }
         });
     </script>
@@ -44,12 +49,14 @@
         .button {
             position: fixed;
             z-index: 9999;
-            display: flex;
             justify-content: center;
             align-items: center;
+            max-width: 400px;
+            display: block;
+            top: 10px;
+            left: 10px;
         }
     </style>
-
 </head>
 
 <body style='margin : 0px; overflow: hidden;'>
@@ -63,8 +70,6 @@
                 webkit-playsinline playsinline></video>
             <a-asset-item id="Moto" src="MotoG_5G.glb"></a-asset-item>
         </a-assets>
-
-
 
         <a-marker type="pattern" url="Moto_Marker.patt" raycaster="objects: .clickable" emitevents="true"
             cursor="fuse: false; rayOrigin: mouse;">
@@ -80,17 +85,9 @@
         <a-entity camera></a-entity>
     </a-scene>
 
-    <div style='position: fixed;
-  max-width: 400px;
-  display: block;
-  top: 10px;
-  left: 10px;
-  '>
-        <button id="myBtn" type="button" class="button">
-            <div>Find out
-                more!</div>
-        </button>
-    </div>
+    <button id="myBtn" type="button" class="button">
+        <div>Find out more!</div>
+    </button>
     <script>
         document.getElementById("myBtn").addEventListener("click", function () {
             let tModel = document.querySelector('#motoModel');
@@ -98,13 +95,6 @@
             tModel.components.gesturehandler.lockToggle();
             let tVid = document.querySelector('#vidPlane');
             tVid.components.vidhandler.hide();
-            let x = document.getElementById("myBtn");
-            if (x.innerHTML === "Find out more!") {
-                x.innerHTML = "Inspect phone";
-            } else {
-                x.innerHTML = "Find out more!";
-            }
-
         });
     </script>
 </body>
